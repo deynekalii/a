@@ -29,32 +29,42 @@ if (!$openOrder) {
     $openOrder = $orderObj->getOpenByTable($table_id);
 }
 
-if (
-    // Eski form için: add_product submit butonu varsa
-    isset($_POST['add_product'])
-    // Yeni form için: product_id ve qty gönderildiyse
-    || (isset($_POST['product_id']) && isset($_POST['qty']))
-) {
-    $product_id = $_POST['product_id'] ?? null;
-    $qty = $_POST['qty'] ?? 1;
+// Açıklama kaydetme
+if (isset($_POST['note_save'])) {
+    $note = trim($_POST['adisyon_note'] ?? '');
+    $orderObj->updateNote($openOrder['id'], $note);
+    header("Location: ?table_id=" . urlencode($table_id));
+    exit();
+}
 
-    // Güvenlik için integer'a çevir
-    $product_id = intval($product_id);
-    $qty = intval($qty);
-
+// Ürün EKLEME (SEPETE EKLE)
+if (isset($_POST['add_product']) && isset($_POST['product_id']) && isset($_POST['qty'])) {
+    $product_id = intval($_POST['product_id']);
+    $qty = intval($_POST['qty']);
     if ($product_id > 0 && $qty > 0) {
         $orderObj->addProduct($openOrder['id'], $product_id, $qty);
         $orderObj->setTableStatus($table_id, 'Dolu');
-        // set_flash('Ürün eklendi.'); // Bu satırı KALDIRIN ya da yorum satırı yapın!
-        // Ekledikten sonra tekrar aynı sayfaya yönlendir (F5 ile çift eklemeyi engeller)
         header("Location: ?table_id=" . urlencode($table_id));
         exit();
     }
 }
+
+// ÜRÜN ARTTIR/EKSİLT (adisyon satırında)
+if (isset($_POST['cart_action'], $_POST['item_id'])) {
+    $item_id = (int)$_POST['item_id'];
+    if ($_POST['cart_action'] === 'increase') {
+        $orderObj->changeQty($item_id, 1);
+    } elseif ($_POST['cart_action'] === 'decrease') {
+        $orderObj->changeQty($item_id, -1);
+    }
+    header("Location: ?table_id=" . urlencode($table_id));
+    exit();
+}
+
+// Ürün silme
 if (isset($_GET['delete_item'])) {
     $orderObj->deleteItem($_GET['delete_item']);
     set_flash('Ürün çıkarıldı.');
-    // Silmeden sonra da yönlendirme önerilir
     header("Location: ?table_id=" . urlencode($table_id));
     exit();
 }

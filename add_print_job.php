@@ -10,6 +10,10 @@ $db = (new Database())->getConnection();
 
 $order_id = $_POST['order_id'];
 
-$db->query("INSERT INTO print_jobs (order_id, status, created_at) VALUES (?, 'waiting', NOW())", [$order_id]);
+// Hatalı: $db->query("INSERT INTO ...", [$order_id]);
+// Doğru:
+$stmt = $db->prepare("INSERT INTO print_jobs (order_id, status, created_at) VALUES (?, 'waiting', NOW())");
+$stmt->execute([$order_id]);
+
 echo "OK";
 ?>

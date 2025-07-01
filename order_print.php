@@ -15,7 +15,7 @@ if (!$order_id) {
     die("Adisyon bulunamadı.");
 }
 
-$order = $orderObj->getById($order_id); // DÜZELTİLDİ!
+$order = $orderObj->getById($order_id);
 if (!$order) {
     die("Sipariş bulunamadı.");
 }
@@ -67,6 +67,12 @@ $items = $orderObj->getItems($order_id);
             font-weight: bold;
             margin-top: 8px;
         }
+        .aciklama {
+            margin:7px 0 5px 0;
+            font-weight:bold;
+            font-size:12px;
+            color:#d84315;
+        }
         @media print {
             body { margin: 0; }
             button { display: none; }
@@ -107,6 +113,11 @@ $items = $orderObj->getItems($order_id);
             </tbody>
         </table>
         <div class="line"></div>
+        <?php if (!empty($order['note'])): ?>
+            <div class="aciklama">
+                AÇIKLAMA: <?= htmlspecialchars($order['note']) ?>
+            </div>
+        <?php endif; ?>
         <div class="total">TOPLAM: <?= number_format($total,2) ?> ₺</div>
     </div>
     <button onclick="window.print()">Tekrar Yazdır</button>
