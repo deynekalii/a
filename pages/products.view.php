@@ -1,23 +1,29 @@
 <?php
 // --- KATEGORİ EKLEME, DÜZENLEME, SİLME İŞLEMLERİ ---
-if (isset($_POST['add_category'])) {
-    $catName = trim($_POST['cat_name']);
-    if ($catName !== '') {
-        $catObj->add($catName);
-        set_flash('Kategori eklendi.');
+try {
+    if (isset($_POST['add_category'])) {
+        $catName = trim($_POST['cat_name']);
+        if ($catName !== '') {
+            $catObj->add($catName);
+            set_flash('Kategori eklendi.','success');
+            header("Location: products.php");
+            exit;
+        }
+    }
+    if (isset($_POST['edit_category'])) {
+        $catObj->update($_POST['cat_id'], $_POST['cat_name']);
+        set_flash('Kategori güncellendi.','success');
         header("Location: products.php");
         exit;
     }
-}
-if (isset($_POST['edit_category'])) {
-    $catObj->update($_POST['cat_id'], $_POST['cat_name']);
-    set_flash('Kategori güncellendi.');
-    header("Location: products.php");
-    exit;
-}
-if (isset($_GET['delete_category'])) {
-    $catObj->delete($_GET['delete_category']);
-    set_flash('Kategori silindi.');
+    if (isset($_GET['delete_category'])) {
+        $catObj->delete($_GET['delete_category']);
+        set_flash('Kategori silindi.','success');
+        header("Location: products.php");
+        exit;
+    }
+} catch(Exception $e) {
+    set_flash($e->getMessage(), 'danger');
     header("Location: products.php");
     exit;
 }
@@ -55,6 +61,7 @@ body {
 </style>
 
 <div class="container py-3">
+    <?php display_flash(); ?>
     <div class="row justify-content-center">
         <div class="col-12 col-lg-10">
             <div class="card shadow-lg border-0">
@@ -82,14 +89,18 @@ body {
                                         <?php endforeach; ?>
                                     </select>
                                 </div>
-                                <div class="col-md-2">
-                                    <button class="btn btn-outline-success w-100 btn-lg" style="border-radius:1em;"><i class="bi bi-search"></i> Filtrele</button>
+                                <div class="col-md-2 col-6">
+                                    <button class="btn btn-outline-success w-100 btn-sm py-2" style="border-radius:1em;">
+                                        <i class="bi bi-search"></i> Filtrele
+                                    </button>
                                 </div>
-                                <div class="col-md-2">
-                                    <a href="products.php" class="btn btn-outline-secondary w-100 btn-lg" style="border-radius:1em;">Tümünü Göster</a>
+                                <div class="col-md-2 col-6">
+                                    <a href="products.php" class="btn btn-outline-secondary w-100 btn-sm py-2" style="border-radius:1em;">
+                                        Tümünü Göster
+                                    </a>
                                 </div>
                             </form>
-                            <div class="table-responsive">
+                            <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
                                 <table class="table table-hover align-middle shadow-sm">
                                     <thead style="background: linear-gradient(90deg,#51ffb6 0%,#3ebd6b 100%); color: #fff;">
                                         <tr>
@@ -108,7 +119,14 @@ body {
                                     ?>
                                         <tr style="background:<?= $rowbg%2==0 ? '#e5f9ea':'#f8fff8' ?>;">
                                             <td><?= $p['id'] ?></td>
-                                            <td class="fw-semibold"><?= htmlspecialchars($p['name']) ?></td>
+                                            <td>
+                                                <span class="fw-semibold <?= $p['status']=='pasif'?'text-muted':'' ?>">
+                                                    <?= htmlspecialchars($p['name']) ?>
+                                                </span>
+                                                <?php if($p['status']=='pasif'): ?>
+                                                    <span class="badge bg-secondary ms-2">Pasif</span>
+                                                <?php endif; ?>
+                                            </td>
                                             <td><span class="badge" style="background: #d0f5fd; color:#2196f3; font-size:1em;"><?= htmlspecialchars($p['category_name']) ?></span></td>
                                             <td class="text-end fw-bold text-success"><?= number_format($p['price'], 2) ?> ₺</td>
                                             <td>
@@ -124,16 +142,16 @@ body {
                                                 >
                                                     <i class="bi bi-pencil"></i>
                                                 </button>
-                                                <button class="btn btn-sm btn-danger" 
-                                                    data-bs-toggle="modal" 
-                                                    data-bs-target="#deleteProductModal"
-                                                    data-id="<?= $p['id'] ?>"
-                                                    data-name="<?= htmlspecialchars($p['name']) ?>"
-                                                    title="Sil"
-                                                    style="border-radius:.9em;"
-                                                >
-                                                    <i class="bi bi-trash"></i>
-                                                </button>
+                                                <?php if($p['status'] == 'aktif'): ?>
+                                                    <a href="products.php?passive_product=<?= $p['id'] ?>" class="btn btn-sm btn-secondary" title="Pasif Yap" style="border-radius:.9em;" onclick="return confirm('Bu ürünü pasif yapmak istediğinize emin misiniz?');">
+                                                        <i class="bi bi-eye-slash"></i>
+                                                    </a>
+                                                <?php else: ?>
+                                                    <a href="products.php?active_product=<?= $p['id'] ?>" class="btn btn-sm btn-success" title="Aktif Yap" style="border-radius:.9em;" onclick="return confirm('Bu ürünü tekrar aktif yapmak istediğinize emin misiniz?');">
+                                                        <i class="bi bi-eye"></i>
+                                                    </a>
+                                                    <span class="badge bg-secondary">Pasif</span>
+                                                <?php endif; ?>
                                             </td>
                                         </tr>
                                     <?php endforeach; ?>
@@ -151,33 +169,37 @@ body {
                                     </button>
                                 </div>
                                 <div class="card-body p-0">
-                                    <div style="overflow-x:auto;">
-                                        <table class="table table-bordered mb-0">
-                                            <thead>
-                                                <tr>
-                                                    <th style="width:45px">ID</th>
-                                                    <th>Ad</th>
-                                                    <th style="width:80px">İşlem</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                            <?php foreach($categories as $c): ?>
-                                                <tr>
-                                                    <td><?= $c['id'] ?></td>
-                                                    <td>
-                                                        <form method="post" class="d-flex align-items-center gap-2">
-                                                            <input type="hidden" name="cat_id" value="<?= $c['id'] ?>">
-                                                            <input type="text" name="cat_name" value="<?= htmlspecialchars($c['name']) ?>" required class="form-control form-control-sm" style="max-width:110px">
-                                                            <button name="edit_category" class="btn btn-sm btn-warning" title="Güncelle"><i class="bi bi-pencil"></i></button>
-                                                        </form>
-                                                    </td>
-                                                    <td>
-                                                        <a href="?delete_category=<?= $c['id'] ?>" onclick="return confirm('Kategori silinsin mi?')" class="btn btn-sm btn-danger" title="Sil"><i class="bi bi-trash"></i></a>
-                                                    </td>
-                                                </tr>
-                                            <?php endforeach; ?>
-                                            </tbody>
-                                        </table>
+                                    <div class="list-group list-group-flush">
+                                        <?php foreach($categories as $c): ?>
+                                            <div class="list-group-item d-flex align-items-center justify-content-between gap-2 flex-wrap" style="border:0;">
+                                                <form method="post" class="d-flex align-items-center gap-2 flex-grow-1">
+                                                    <input type="hidden" name="cat_id" value="<?= $c['id'] ?>">
+                                                    <input type="text" name="cat_name" value="<?= htmlspecialchars($c['name']) ?>" required class="form-control form-control-sm" style="max-width:120px; border-radius: 8px;">
+                                                    <button name="edit_category" class="btn btn-warning btn-sm" title="Güncelle" style="border-radius: 7px;"><i class="bi bi-pencil"></i></button>
+                                                </form>
+                                                <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#delCatModal<?= $c['id'] ?>" title="Sil" style="border-radius: 7px;">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            </div>
+                                            <div class="modal fade" id="delCatModal<?= $c['id'] ?>" tabindex="-1" aria-labelledby="delCatModalLabel<?= $c['id'] ?>" aria-hidden="true">
+                                                <div class="modal-dialog">
+                                                    <form method="get" class="modal-content">
+                                                        <input type="hidden" name="delete_category" value="<?= $c['id'] ?>">
+                                                        <div class="modal-header bg-danger text-white">
+                                                            <h5 class="modal-title" id="delCatModalLabel<?= $c['id'] ?>"><i class="bi bi-trash"></i> Kategori Sil</h5>
+                                                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <p><b><?= htmlspecialchars($c['name']) ?></b> adlı kategoriyi silmek istediğinize emin misiniz?</p>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button class="btn btn-danger"><i class="bi bi-trash"></i> Sil</button>
+                                                            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Vazgeç</button>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        <?php endforeach; ?>
                                     </div>
                                 </div>
                             </div>
@@ -280,26 +302,6 @@ body {
   </div>
 </div>
 
-<!-- Silme Onay Modalı -->
-<div class="modal fade" id="deleteProductModal" tabindex="-1" aria-labelledby="deleteProductModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <form method="get" class="modal-content">
-      <input type="hidden" name="delete" id="deleteProductId">
-      <div class="modal-header" style="background: linear-gradient(90deg,#f85032 0%,#e73827 100%);">
-        <h5 class="modal-title fw-bold text-white" id="deleteProductModalLabel"><i class="bi bi-trash"></i> Ürünü Sil</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-      </div>
-      <div class="modal-body">
-        <p><span id="deleteProductName" class="fw-bold text-danger"></span> adlı ürünü silmek istediğinize emin misiniz?</p>
-      </div>
-      <div class="modal-footer">
-        <button class="btn btn-danger btn-lg px-4" style="border-radius:1.2em;"><i class="bi bi-trash"></i> Evet, Sil</button>
-        <button type="button" class="btn btn-secondary btn-lg" style="border-radius:1.2em;" data-bs-dismiss="modal">Vazgeç</button>
-      </div>
-    </form>
-  </div>
-</div>
-
 <script>
 document.addEventListener("DOMContentLoaded", function() {
     var editModal = document.getElementById('editProductModal');
@@ -309,13 +311,6 @@ document.addEventListener("DOMContentLoaded", function() {
         document.getElementById('editProductName').value = button.getAttribute('data-name');
         document.getElementById('editProductCategory').value = button.getAttribute('data-category');
         document.getElementById('editProductPrice').value = button.getAttribute('data-price');
-    });
-
-    var delModal = document.getElementById('deleteProductModal');
-    delModal.addEventListener('show.bs.modal', function (event) {
-        var button = event.relatedTarget;
-        document.getElementById('deleteProductId').value = button.getAttribute('data-id');
-        document.getElementById('deleteProductName').textContent = button.getAttribute('data-name');
     });
 });
 </script>

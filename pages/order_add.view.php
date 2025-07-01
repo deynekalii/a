@@ -24,8 +24,6 @@
       margin-bottom: 1.5rem;
       height: 520px;
       overflow-y: auto;
-      min-height: unset;
-      max-height: unset;
     }
     .category-scroll {
       overflow-x: auto;
@@ -62,6 +60,7 @@
     }
     .product-btn:hover { background: #39b548; color:#fff; }
     .product-price { font-weight:700; font-size:0.99em; margin-top:2px; }
+    .product-icon { font-size: 1.3em; margin-bottom: 2px; }
     .cart-table thead th {
       background: #cbeafd;
       color: #1976d2;
@@ -86,6 +85,7 @@
       font-size: 0.96rem;
       word-break: break-word;
       max-width: 115px;
+      white-space: normal;
     }
     .cart-table tfoot th {
       background: #1eaeec;
@@ -106,13 +106,25 @@
       overflow: hidden;
       margin-bottom: 0;
     }
-    .cart-table .btn {
-      padding: 2px 7px 2px 7px;
-      font-size: 0.95em;
+    .cart-table .btn.qty-btn {
+      padding: 1px 5px 1px 5px;
+      font-size: 0.83em;
       border-radius: 7px;
+      min-width: 19px;
+      min-height: 19px;
+      line-height: 1;
     }
+    .cart-table .qty-control {
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      justify-content: center;
+    }
+    .cart-table .qty-control form { display: inline; }
     .modern-card.cart-area {
-      min-width:320px; max-width:540px;
+      min-width: 380px;
+      max-width: 650px;
+      min-height: 480px;
       display: flex;
       flex-direction: column;
     }
@@ -124,47 +136,43 @@
     }
     .modern-card.cart-area .table-responsive {
       flex: 1 1 auto;
-      overflow-y: unset;
       min-height: unset;
-      max-height: unset;
+      max-height: 520px;
+      overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: #cbeafd #fff;
     }
-    .butonlar-tek-satir {
-      display: flex;
-      gap: 8px;
-      justify-content: center;
-      margin-top: 20px;
-      flex-wrap: wrap;
+    .modern-card.cart-area .table-responsive::-webkit-scrollbar {
+      width: 8px;
     }
-    .butonlar-tek-satir .btn {
-      min-width: 120px;
-      font-size: 0.96rem;
-      font-weight: 500;
-      border-radius: 1.4rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 0.36rem 0.4rem;
-      letter-spacing: 0.02em;
-      white-space: nowrap;
-      transition: box-shadow .16s,transform .13s;
+    .modern-card.cart-area .table-responsive::-webkit-scrollbar-thumb {
+      background: #cbeafd;
+      border-radius: 8px;
     }
-    .butonlar-tek-satir .btn i { margin-right: 6px; }
-    .butonlar-tek-satir .btn:hover {
-      box-shadow: 0 4px 16px 0 rgba(67,206,162,.18);
-      transform: scale(1.04);
-      opacity: .96;
+    .modern-card.cart-area .table-responsive::-webkit-scrollbar-track {
+      background: #fff;
+      border-radius: 8px;
     }
     @media (max-width: 991px) {
       .modern-page-flex { flex-direction: column; }
       .modern-card { margin-bottom: 1.5rem; }
       .products-wrap { gap:7px; }
       .products-area-bg { padding: 10px 3vw 20px 3vw; height: 380px; }
+      .modern-card.cart-area {
+        min-width: 100%;
+        max-width: 100%;
+      }
     }
     @media (max-width: 600px) {
-      .butonlar-tek-satir { flex-direction: column; gap: 7px; }
-      .butonlar-tek-satir .btn { min-width: 100%; justify-content: flex-start; }
       .modern-card { margin-top: 18px; }
       .modern-card-header .header-actions { flex-direction: column; gap: 6px;}
+      .modern-card.cart-area .table-responsive { max-height: 230px;}
+      .products-area-bg { height: 220px; }
+      .cart-table .btn.qty-btn { min-width: 16px; min-height: 16px; font-size: 0.80em; }
+      .modern-card.cart-area {
+        min-width: 100%;
+        max-width: 100%;
+      }
     }
   </style>
 </head>
@@ -201,6 +209,23 @@
       </div>
       <!-- Ürünler -->
       <?php
+      // Küçük ikon fonksiyonu
+      function product_icon($name) {
+        $name = mb_strtolower($name, 'UTF-8');
+        if (str_contains($name, 'ayran')) return '<i class="bi bi-droplet-half product-icon" style="color:#00bfae"></i>';
+        if (str_contains($name, 'su')) return '<i class="bi bi-droplet product-icon" style="color:#2196f3"></i>';
+        if (str_contains($name, 'çay')) return '<i class="bi bi-cup-hot product-icon" style="color:#ff9800"></i>';
+        if (str_contains($name, 'lahmacun')) return '<i class="bi bi-emoji-heart-eyes product-icon" style="color:#f44336"></i>';
+        if (str_contains($name, 'pide')) return '<i class="bi bi-egg-fried product-icon" style="color:#e67e22"></i>';
+        if (str_contains($name, 'pizza')) return '<i class="bi bi-pie-chart product-icon" style="color:#ff7043"></i>';
+        if (str_contains($name, 'tost')) return '<i class="bi bi-grid-1x2-fill product-icon" style="color:#cddc39"></i>';
+        if (str_contains($name, 'tatlı')) return '<i class="bi bi-cupcake product-icon" style="color:#b388ff"></i>';
+        if (str_contains($name, 'salata')) return '<i class="bi bi-emoji-smile product-icon" style="color:#43a047"></i>';
+        if (str_contains($name, 'kebap')) return '<i class="bi bi-fire product-icon" style="color:#d84315"></i>';
+        if (str_contains($name, 'gazoz')) return '<i class="bi bi-cup-straw product-icon" style="color:#00bcd4"></i>';
+        if (str_contains($name, 'kola')) return '<i class="bi bi-cup-straw product-icon" style="color:#1976d2"></i>';
+        return '<i class="bi bi-egg-fried product-icon" style="color:#bdbdbd"></i>';
+      }
       $productsByCat = [];
       foreach($products as $p) {
         $productsByCat[$p['category_id']][] = $p;
@@ -212,7 +237,8 @@
             <form method="post" style="display:inline;">
               <input type="hidden" name="product_id" value="<?= $p['id'] ?>">
               <input type="hidden" name="qty" value="1">
-              <button type="submit" class="product-btn">
+              <button type="submit" class="product-btn" name="add_product">
+                <?= product_icon($p['name']) ?>
                 <?= htmlspecialchars($p['name']) ?>
                 <span class="product-price"><?= number_format($p['price'],2) ?>₺</span>
               </button>
@@ -226,7 +252,8 @@
               <form method="post" style="display:inline;">
                 <input type="hidden" name="product_id" value="<?= $p['id'] ?>">
                 <input type="hidden" name="qty" value="1">
-                <button type="submit" class="product-btn">
+                <button type="submit" class="product-btn" name="add_product">
+                  <?= product_icon($p['name']) ?>
                   <?= htmlspecialchars($p['name']) ?>
                   <span class="product-price"><?= number_format($p['price'],2) ?>₺</span>
                 </button>
@@ -257,8 +284,28 @@
                 <?php $total = 0; ?>
                 <?php foreach($order_items as $item): ?>
                   <tr>
-                    <td><?= htmlspecialchars($item['name']) ?></td>
-                    <td class="text-center"><?= $item['qty'] ?></td>
+                    <td>
+                      <?= htmlspecialchars($item['name']) ?>
+                    </td>
+                    <td class="text-center">
+                      <div class="qty-control">
+                        <form method="post" style="display:inline;">
+                          <input type="hidden" name="cart_action" value="decrease">
+                          <input type="hidden" name="item_id" value="<?= $item['id'] ?>">
+                          <button type="submit" class="btn btn-outline-secondary btn-sm qty-btn" <?= $item['qty'] <= 1 ? 'disabled' : '' ?> title="Azalt">
+                            <i class="bi bi-dash"></i>
+                          </button>
+                        </form>
+                        <span><?= $item['qty'] ?></span>
+                        <form method="post" style="display:inline;">
+                          <input type="hidden" name="cart_action" value="increase">
+                          <input type="hidden" name="item_id" value="<?= $item['id'] ?>">
+                          <button type="submit" class="btn btn-outline-secondary btn-sm qty-btn" title="Arttır">
+                            <i class="bi bi-plus"></i>
+                          </button>
+                        </form>
+                      </div>
+                    </td>
                     <td class="text-end"><?= number_format($item['price'], 2) ?>₺</td>
                     <td class="text-end"><?= number_format($item['qty'] * $item['price'], 2) ?>₺</td>
                     <td>
@@ -283,7 +330,10 @@
         <?php else: ?>
           <div class="p-4 text-center text-muted fw-semibold" style="font-size:1.09rem;">Henüz ürün eklenmedi.</div>
         <?php endif; ?>
-
+      </div>
+    </div>
+  </div>
+</div>
 <!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
@@ -295,7 +345,6 @@ function showCategory(catId) {
     div.classList.toggle('d-none', (catId != 0 && div.getAttribute('data-category') != catId));
   });
 }
-
 function addPrintJob(orderId) {
   fetch('add_print_job.php', {
     method: 'POST',
