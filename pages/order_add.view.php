@@ -4,11 +4,10 @@
   <meta charset="UTF-8">
   <title>Modern Adisyon Ekle</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <!-- Bootstrap 5 CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <!-- Bootstrap Icons -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
   <style>
+    /* ... Stil kodlarınız aynı şekilde ... */
     body { background: linear-gradient(120deg,#d4fc79 0%, #96e6a1 100%); min-height: 100vh; font-family: 'Segoe UI', Arial, sans-serif; }
     .modern-card { border-radius: 1.4rem; box-shadow: 0 6px 32px 0 rgba(0,0,0,.09); background: #fff; overflow: hidden; }
     .modern-card-header { background: linear-gradient(90deg,#27c993 0%,#1383b5 100%); color: #fff; font-size: 1.22rem; font-weight: 700; padding: 1rem 1.6rem; border-bottom: none; }
@@ -17,13 +16,31 @@
     .modern-card-header .header-actions form, .modern-card-header .header-actions a { display: inline-block; margin: 0; }
     .modern-card-header .btn-warning { color: #664900; font-weight: 600; }
     .modern-card-header .btn-warning:hover { color: #332500; }
+    .modern-card-header .btn-note {
+      color: #0d5c63;
+      background: #e3f6fc;
+      border: none;
+      font-size: 1rem;
+      padding: 0.25rem 0.7rem;
+      border-radius: 1.2em;
+      display: flex;
+      align-items: center;
+      gap: 0.35em;
+      transition: background 0.12s, color 0.12s;
+    }
+    .modern-card-header .btn-note:hover, .modern-card-header .btn-note:focus {
+      color: #fff;
+      background: #1383b5;
+    }
     .products-area-bg {
       background: #f4fbff;
       border-radius: 1.2rem;
       padding: 24px 18px 36px 18px;
       margin-bottom: 1.5rem;
-      height: 520px;
+      height: 660px;
       overflow-y: auto;
+      flex: 2 1 0%;
+      min-width: 0;
     }
     .category-scroll {
       overflow-x: auto;
@@ -52,15 +69,79 @@
       background: linear-gradient(90deg,#51ffb6 0%,#3ebd6b 100%);
       color: #085c3c;
     }
-    .products-wrap { display:flex; flex-wrap:wrap; gap:10px; margin-bottom:12px; }
+    .products-wrap {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin-bottom: 12px;
+      justify-content: flex-start;
+    }
     .product-btn {
-      display: flex; flex-direction:column; align-items:center; justify-content:center;
-      min-width: 95px; max-width:130px; padding:8px 5px 6px 5px; background: #6bc66b;
-      color:#fff; border:none; border-radius:9px; font-size:0.99em; font-weight:500; cursor:pointer; box-shadow:0 1px 7px rgba(52,168,83,0.09); transition:background .13s;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-width: 75px;
+      max-width: 95px;
+      min-height: 68px;
+      max-height: 84px;
+      padding: 6px 2px 6px 2px;
+      background: #6bc66b;
+      color: #fff;
+      border: none;
+      border-radius: 9px;
+      font-size: 0.89em;
+      font-weight: 500;
+      cursor: pointer;
+      box-shadow: 0 1px 7px rgba(52,168,83,0.09);
+      transition: background .13s, color .13s, box-shadow .13s;
+      line-height: 1.1;
+      text-align: center;
     }
     .product-btn:hover { background: #39b548; color:#fff; }
-    .product-price { font-weight:700; font-size:0.99em; margin-top:2px; }
-    .product-icon { font-size: 1.3em; margin-bottom: 2px; }
+    .product-price { font-weight:700; font-size:0.96em; margin-top:2px; }
+    .product-icon { font-size: 1.15em; margin-bottom: 2px; }
+    .modern-page-flex {
+      display: flex;
+      flex-direction: row;
+      align-items: stretch;
+      gap: 1.5rem;
+    }
+    .modern-card.cart-area {
+      flex: 1 1 350px;
+      min-width: 340px;
+      max-width: 480px;
+      margin-bottom: 0 !important;
+      display: flex;
+      flex-direction: column;
+      min-height: 600px;
+      background: #fff;
+    }
+    .modern-card.cart-area .card-body {
+      flex: 1 1 auto;
+      display: flex;
+      flex-direction: column;
+      padding: 0;
+    }
+    .modern-card.cart-area .table-responsive {
+      flex: 1 1 auto;
+      min-height: unset;
+      max-height: 600px;
+      overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: #cbeafd #fff;
+    }
+    .modern-card.cart-area .table-responsive::-webkit-scrollbar {
+      width: 8px;
+    }
+    .modern-card.cart-area .table-responsive::-webkit-scrollbar-thumb {
+      background: #cbeafd;
+      border-radius: 8px;
+    }
+    .modern-card.cart-area .table-responsive::-webkit-scrollbar-track {
+      background: #fff;
+      border-radius: 8px;
+    }
     .cart-table thead th {
       background: #cbeafd;
       color: #1976d2;
@@ -121,58 +202,42 @@
       justify-content: center;
     }
     .cart-table .qty-control form { display: inline; }
-    .modern-card.cart-area {
-      min-width: 380px;
-      max-width: 650px;
-      min-height: 480px;
-      display: flex;
-      flex-direction: column;
-    }
-    .modern-card.cart-area .card-body {
-      flex: 1 1 auto;
-      display: flex;
-      flex-direction: column;
-      padding: 0;
-    }
-    .modern-card.cart-area .table-responsive {
-      flex: 1 1 auto;
-      min-height: unset;
-      max-height: 520px;
-      overflow-y: auto;
-      scrollbar-width: thin;
-      scrollbar-color: #cbeafd #fff;
-    }
-    .modern-card.cart-area .table-responsive::-webkit-scrollbar {
-      width: 8px;
-    }
-    .modern-card.cart-area .table-responsive::-webkit-scrollbar-thumb {
-      background: #cbeafd;
-      border-radius: 8px;
-    }
-    .modern-card.cart-area .table-responsive::-webkit-scrollbar-track {
-      background: #fff;
-      border-radius: 8px;
-    }
     @media (max-width: 991px) {
       .modern-page-flex { flex-direction: column; }
+      .products-area-bg { padding: 10px 2vw 20px 2vw; height: 480px; }
       .modern-card { margin-bottom: 1.5rem; }
-      .products-wrap { gap:7px; }
-      .products-area-bg { padding: 10px 3vw 20px 3vw; height: 380px; }
       .modern-card.cart-area {
         min-width: 100%;
         max-width: 100%;
+        min-height: 450px;
       }
+      .modern-card.cart-area .table-responsive { max-height: 450px; }
     }
     @media (max-width: 600px) {
       .modern-card { margin-top: 18px; }
-      .modern-card-header .header-actions { flex-direction: column; gap: 6px;}
-      .modern-card.cart-area .table-responsive { max-height: 230px;}
-      .products-area-bg { height: 220px; }
+      .modern-card-header { padding: 0.7rem 0.6rem; font-size: 1.06rem; }
+      .modern-card-header .header-actions { flex-direction: row; gap: 6px; }
+      .modern-card-header-content {
+        flex-direction: column;
+        align-items: flex-start !important;
+        gap: 0.5rem !important;
+      }
+      .modern-card-header .header-actions { justify-content: flex-start; }
+      .modern-card.cart-area .table-responsive { max-height: 350px;}
+      .products-area-bg { height: 400px; }
       .cart-table .btn.qty-btn { min-width: 16px; min-height: 16px; font-size: 0.80em; }
       .modern-card.cart-area {
         min-width: 100%;
         max-width: 100%;
+        min-height: 350px;
       }
+    }
+    .modern-card-header-content {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      width: 100%;
     }
   </style>
 </head>
@@ -180,36 +245,28 @@
 <div class="container py-4">
 
   <div class="modern-card mb-4">
-    <div class="modern-card-header d-flex justify-content-between align-items-center">
-      <span>
-        <i class="bi bi-receipt me-2"></i> Adisyon — Masa: 
-        <span class="modern-badge"><?= htmlspecialchars($t['name'] ?? '') ?></span>
-      </span>
-      <div class="header-actions">
-        <a href="tables.php" class="modern-btn modern-btn-primary btn-sm me-2"><i class="bi bi-arrow-left"></i> Masalara Dön</a>
-        <?php if (!empty($order_items)): ?>
-        <button type="button" class="btn btn-warning btn-sm" onclick="addPrintJob(<?= htmlspecialchars($openOrder['id'] ?? 0) ?>)">
-          <i class="bi bi-printer"></i> Yazdır
-        </button>
-        <?php endif; ?>
+    <div class="modern-card-header">
+      <div class="modern-card-header-content">
+        <span>
+          <i class="bi bi-receipt me-2"></i> Adisyon — Masa: 
+          <span class="modern-badge"><?= htmlspecialchars($t['name'] ?? '') ?></span>
+        </span>
+        <div class="header-actions">
+          <a href="tables.php" class="modern-btn modern-btn-primary btn-sm me-2"><i class="bi bi-arrow-left"></i> Masalara Dön</a>
+        </div>
       </div>
     </div>
   </div>
 
-  <div class="d-flex gap-4 modern-page-flex">
+  <div class="modern-page-flex">
 
-    <!-- Ürünler ve kategoriler RENKLİ ARKA PLAN -->
-    <div class="flex-fill mb-0 products-area-bg">
-      <!-- Kategoriler -->
+    <div class="products-area-bg mb-0">
       <div class="category-scroll" id="categoryScroll">
-        <button class="category-btn active" onclick="showCategory(0)">Tümü</button>
         <?php foreach($categories as $cat): ?>
           <button class="category-btn" data-category="<?= $cat['id'] ?>" onclick="showCategory(<?= $cat['id'] ?>)"><?= htmlspecialchars($cat['name']) ?></button>
         <?php endforeach; ?>
       </div>
-      <!-- Ürünler -->
       <?php
-      // Küçük ikon fonksiyonu
       function product_icon($name) {
         $name = mb_strtolower($name, 'UTF-8');
         if (str_contains($name, 'ayran')) return '<i class="bi bi-droplet-half product-icon" style="color:#00bfae"></i>';
@@ -232,27 +289,16 @@
       }
       ?>
       <div id="productsListWrap">
-        <div class="products-wrap" data-category="0">
-          <?php foreach($products as $p): ?>
-            <form method="post" style="display:inline;">
-              <input type="hidden" name="product_id" value="<?= $p['id'] ?>">
-              <input type="hidden" name="qty" value="1">
-              <button type="submit" class="product-btn" name="add_product">
-                <?= product_icon($p['name']) ?>
-                <?= htmlspecialchars($p['name']) ?>
-                <span class="product-price"><?= number_format($p['price'],2) ?>₺</span>
-              </button>
-            </form>
-          <?php endforeach; ?>
-        </div>
         <?php foreach($categories as $cat): ?>
-          <div class="products-wrap d-none" data-category="<?= $cat['id'] ?>">
+          <div class="products-wrap<?= $cat === $categories[0] ? '' : ' d-none' ?>" data-category="<?= $cat['id'] ?>">
             <?php if(isset($productsByCat[$cat['id']])){
                 foreach($productsByCat[$cat['id']] as $p): ?>
-              <form method="post" style="display:inline;">
+              <form method="post" style="display:inline;" class="add-product-form">
                 <input type="hidden" name="product_id" value="<?= $p['id'] ?>">
                 <input type="hidden" name="qty" value="1">
-                <button type="submit" class="product-btn" name="add_product">
+                <input type="hidden" name="table_id" value="<?= htmlspecialchars($t['id']) ?>">
+                <input type="hidden" name="add_product" value="1">
+                <button type="submit" class="product-btn">
                   <?= product_icon($p['name']) ?>
                   <?= htmlspecialchars($p['name']) ?>
                   <span class="product-price"><?= number_format($p['price'],2) ?>₺</span>
@@ -263,11 +309,9 @@
         <?php endforeach; ?>
       </div>
     </div>
-    <!-- /Ürünler ve kategoriler RENKLİ ARKA PLAN -->
-
-    <!-- Sepet/güncel adisyon kartı -->
-    <div class="modern-card cart-area flex-fill mb-0">
-      <div class="card-body">
+    <div class="modern-card cart-area mb-0">
+      <div id="cart-content-area" class="card-body">
+        <div id="cart-inner">
         <?php if(isset($order_items) && count($order_items) > 0): ?>
           <div class="table-responsive">
             <table class="table cart-table table-sm mb-0 align-middle">
@@ -284,12 +328,11 @@
                 <?php $total = 0; ?>
                 <?php foreach($order_items as $item): ?>
                   <tr>
-                    <td>
-                      <?= htmlspecialchars($item['name']) ?>
-                    </td>
+                    <td><?= htmlspecialchars($item['name']) ?></td>
                     <td class="text-center">
                       <div class="qty-control">
-                        <form method="post" style="display:inline;">
+                        <form method="post" style="display:inline;" class="cart-action-form">
+                          <input type="hidden" name="table_id" value="<?= htmlspecialchars($t['id']) ?>">
                           <input type="hidden" name="cart_action" value="decrease">
                           <input type="hidden" name="item_id" value="<?= $item['id'] ?>">
                           <button type="submit" class="btn btn-outline-secondary btn-sm qty-btn" <?= $item['qty'] <= 1 ? 'disabled' : '' ?> title="Azalt">
@@ -297,7 +340,8 @@
                           </button>
                         </form>
                         <span><?= $item['qty'] ?></span>
-                        <form method="post" style="display:inline;">
+                        <form method="post" style="display:inline;" class="cart-action-form">
+                          <input type="hidden" name="table_id" value="<?= htmlspecialchars($t['id']) ?>">
                           <input type="hidden" name="cart_action" value="increase">
                           <input type="hidden" name="item_id" value="<?= $item['id'] ?>">
                           <button type="submit" class="btn btn-outline-secondary btn-sm qty-btn" title="Arttır">
@@ -309,10 +353,14 @@
                     <td class="text-end"><?= number_format($item['price'], 2) ?>₺</td>
                     <td class="text-end"><?= number_format($item['qty'] * $item['price'], 2) ?>₺</td>
                     <td>
-                      <a href="?table_id=<?= urlencode($t['id']) ?>&delete_item=<?= urlencode($item['id']) ?>" class="btn btn-outline-danger btn-sm"
-                        title="Sil" onclick="return confirm('Bu ürünü adisyondan çıkarmak istiyor musunuz?')">
-                        <i class="bi bi-trash"></i>
-                      </a>
+                      <form method="post" style="display:inline;" class="cart-delete-form">
+                          <input type="hidden" name="table_id" value="<?= htmlspecialchars($t['id']) ?>">
+                          <input type="hidden" name="delete_item" value="<?= urlencode($item['id']) ?>">
+                          <button type="submit" class="btn btn-outline-danger btn-sm"
+                            title="Sil" onclick="return confirm('Bu ürünü adisyondan çıkarmak istiyor musunuz?')">
+                            <i class="bi bi-trash"></i>
+                          </button>
+                      </form>
                     </td>
                   </tr>
                   <?php $total += $item['qty'] * $item['price']; ?>
@@ -330,21 +378,206 @@
         <?php else: ?>
           <div class="p-4 text-center text-muted fw-semibold" style="font-size:1.09rem;">Henüz ürün eklenmedi.</div>
         <?php endif; ?>
+        <?php if (!empty($openOrder['note'])): ?>
+          <div class="alert alert-info mt-3 py-2 px-3" style="font-size: 1.03em;">
+            <i class="bi bi-info-circle me-1"></i>
+            <span><?= nl2br(htmlspecialchars($openOrder['note'])) ?></span>
+          </div>
+        <?php endif; ?>
+        </div>
+        <!-- Butonlar her zaman, cart-inner dışında, asla ajax ile değişmez -->
+        <div class="d-flex flex-row gap-2 mt-3 justify-content-end">
+          <button type="button" class="btn btn-warning btn-sm"
+            onclick="addPrintJob(<?= htmlspecialchars($openOrder['id'] ?? 0) ?>)"
+            <?php if (empty($order_items)): ?>disabled<?php endif; ?>>
+            <i class="bi bi-printer"></i> Yazdır
+          </button>
+          <button type="button" class="btn-note btn-sm" title="Adisyon açıklaması ekle/düzenle" onclick="openOrderNoteModal()">
+            <i class="bi bi-chat-left-text"></i>
+            Açıklama
+          </button>
+        </div>
       </div>
     </div>
   </div>
 </div>
-<!-- Bootstrap JS -->
+
+<div class="modal fade" id="orderNoteModal" tabindex="-1" aria-labelledby="orderNoteModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <form method="post" id="orderNoteForm">
+        <div class="modal-header">
+          <h5 class="modal-title" id="orderNoteModalLabel">Adisyon Açıklaması</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Kapat"></button>
+        </div>
+        <div class="modal-body">
+          <textarea class="form-control" name="adisyon_note" id="adisyonNoteInput" rows="3" maxlength="200" placeholder="Adisyon için not veya açıklama yazın..."><?= htmlspecialchars($openOrder['note'] ?? '') ?></textarea>
+          <input type="hidden" name="table_id" value="<?= htmlspecialchars($t['id']) ?>">
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+          <button type="submit" class="btn btn-success" name="note_save">Kaydet</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
+let activeCategoryId = <?php echo isset($categories[0]['id']) ? (int)$categories[0]['id'] : 0; ?>;
+
 function showCategory(catId) {
+  activeCategoryId = catId;
   document.querySelectorAll('.category-btn').forEach(btn => {
-    btn.classList.toggle('active', (btn.getAttribute('data-category') == catId) || (catId == 0 && !btn.getAttribute('data-category')));
+    btn.classList.toggle('active', btn.getAttribute('data-category') == catId);
   });
   document.querySelectorAll('.products-wrap').forEach(div => {
-    div.classList.toggle('d-none', (catId != 0 && div.getAttribute('data-category') != catId));
+    div.classList.toggle('d-none', div.getAttribute('data-category') != catId);
   });
 }
+
+document.addEventListener('DOMContentLoaded', () => {
+    showCategory(activeCategoryId);
+});
+
+document.querySelectorAll('.add-product-form').forEach(form => {
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+        fetch(window.location.href, {
+            method: 'POST',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: formData
+        })
+        .then(response => {
+            if (!response.ok) {
+                if (response.status === 401) {
+                    alert('Oturum süresi doldu. Lütfen tekrar giriş yapın.');
+                    window.location.reload();
+                    return Promise.reject('Session expired');
+                }
+                throw new Error('Network response was not ok.');
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.status === 'success') {
+                // Sadece tablo ve not içeren kısmı değiştiriyoruz, butonlar asla kaybolmaz!
+                document.getElementById('cart-inner').innerHTML = data.cartHtml;
+                showCategory(activeCategoryId);
+            } else {
+                alert('Ürün eklenirken bir hata oluştu: ' + (data.message || 'Bilinmeyen Hata'));
+            }
+        })
+        .catch(error => {
+            console.error('Hata:', error);
+            alert('Ürün eklenirken bir ağ hatası oluştu.');
+        });
+    });
+});
+
+document.getElementById('cart-content-area').addEventListener('submit', function(e) {
+    const form = e.target.closest('.cart-action-form, .cart-delete-form');
+    if (form) {
+        e.preventDefault();
+        let confirmed = true;
+        if (form.classList.contains('cart-delete-form')) {
+            confirmed = confirm('Bu ürünü adisyondan çıkarmak istiyor musunuz?');
+        }
+        if (confirmed) {
+            const formData = new FormData(form);
+            fetch(window.location.href, {
+                method: 'POST',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: formData
+            })
+            .then(response => {
+                if (!response.ok) {
+                    if (response.status === 401) {
+                        alert('Oturum süresi doldu. Lütfen tekrar giriş yapın.');
+                        window.location.reload();
+                        return Promise.reject('Session expired');
+                    }
+                    throw new Error('Network response was not ok.');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.status === 'success') {
+                    // Sadece tablo ve not içeren kısmı değiştiriyoruz, butonlar asla kaybolmaz!
+                    document.getElementById('cart-inner').innerHTML = data.cartHtml;
+                    showCategory(activeCategoryId);
+                } else {
+                    alert('İşlem sırasında bir hata oluştu: ' + (data.message || 'Bilinmeyen Hata'));
+                }
+            })
+            .catch(error => {
+                console.error('Hata:', error);
+                alert('İşlem sırasında bir ağ hatası oluştu.');
+            });
+        }
+    }
+});
+
+document.getElementById('orderNoteForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const form = this;
+    const formData = new FormData(form);
+    formData.append('note_save', '1');
+    fetch(window.location.href, {
+        method: 'POST',
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+        },
+        body: formData
+    })
+    .then(response => {
+        if (!response.ok) {
+            if (response.status === 401) {
+                alert('Oturum süresi doldu. Lütfen tekrar giriş yapın.');
+                window.location.reload();
+                return Promise.reject('Session expired');
+            }
+            throw new Error('Network response was not ok.');
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.status === 'success') {
+            var modalElement = document.getElementById('orderNoteModal');
+            var modal = bootstrap.Modal.getInstance(modalElement);
+            if (modal) {
+                modal.hide();
+            }
+            const noteDisplay = document.querySelector('.alert.alert-info span');
+            if (noteDisplay) {
+                noteDisplay.innerHTML = data.noteHtml;
+            } else {
+                const cartAreaBody = document.querySelector('.modern-card.cart-area .card-body');
+                if (cartAreaBody) {
+                    const newNoteDiv = document.createElement('div');
+                    newNoteDiv.className = 'alert alert-info mt-3 py-2 px-3';
+                    newNoteDiv.style.fontSize = '1.03em';
+                    newNoteDiv.innerHTML = `<i class="bi bi-info-circle me-1"></i><span>${data.noteHtml}</span>`;
+                    cartAreaBody.appendChild(newNoteDiv);
+                }
+            }
+            alert('Açıklama kaydedildi!');
+        } else {
+            alert('Açıklama kaydedilirken bir hata oluştu: ' + (data.message || 'Bilinmeyen Hata'));
+        }
+    })
+    .catch(error => {
+        console.error('Hata:', error);
+        alert('Açıklama kaydedilirken bir ağ hatası oluştu.');
+    });
+});
+
 function addPrintJob(orderId) {
   fetch('add_print_job.php', {
     method: 'POST',
@@ -360,6 +593,11 @@ function addPrintJob(orderId) {
     }
   })
   .catch(err => alert("Sunucuya erişilemedi: " + err));
+}
+
+function openOrderNoteModal() {
+  var modal = new bootstrap.Modal(document.getElementById('orderNoteModal'));
+  modal.show();
 }
 </script>
 </body>
